@@ -221,5 +221,7 @@ def calendar_handler(calendar_id=None):
             db.session.commit()
             return jsonify({"msg":"Reservation has been deleted"}), 201
 
+
+
 if __name__ == "__main__":
     Manager.run()

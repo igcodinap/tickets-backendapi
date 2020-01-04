@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d12ecc901720
+Revision ID: 6ae157158545
 Revises: 
-Create Date: 2020-01-04 16:24:41.864918
+Create Date: 2020-01-04 17:59:52.013672
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd12ecc901720'
+revision = '6ae157158545'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -68,18 +68,16 @@ def upgrade():
     sa.UniqueConstraint('event_id')
     )
     op.create_table('favorite',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['category.category_id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], ),
-    sa.PrimaryKeyConstraint('user_id', 'category_id')
+    sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], )
     )
     op.create_table('attendance',
-    sa.Column('calendar_id', sa.Integer(), nullable=False),
-    sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.Column('calendar_id', sa.Integer(), nullable=True),
+    sa.Column('event_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['calendar_id'], ['calendar.calendar_id'], ),
-    sa.ForeignKeyConstraint(['event_id'], ['event.event_id'], ),
-    sa.PrimaryKeyConstraint('calendar_id', 'event_id')
+    sa.ForeignKeyConstraint(['event_id'], ['event.event_id'], )
     )
     # ### end Alembic commands ###
 

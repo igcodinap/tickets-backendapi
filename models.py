@@ -3,14 +3,14 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 favorite = db.Table('favorite',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id'), primary_key=True),
-    db.Column('category_id', db.Integer, db.ForeignKey('category.category_id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.category_id'))
 )
 
 
 attendance = db.Table('attendance',
-    db.Column('calendar_id', db.Integer, db.ForeignKey('calendar.calendar_id'), primary_key=True),
-    db.Column('event_id', db.Integer, db.ForeignKey('event.event_id'), primary_key=True)
+    db.Column('calendar_id', db.Integer, db.ForeignKey('calendar.calendar_id')),
+    db.Column('event_id', db.Integer, db.ForeignKey('event.event_id'))
 )
 
 class Auth(db.Model):

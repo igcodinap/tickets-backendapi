@@ -229,6 +229,26 @@ def favcategories(user_id, category_id):
         user_query.favs.append(category_query)
         db.session.commit()
         return jsonify({'msg': 'Category added'}), 201
+    
+    if request.method == 'DELETE':
+        user_query.favs.remove(category_query)
+        db.session.commit()
+        return jsonify({'msg': 'category deleted'}), 201
+
+@app.route('/calendar/<int:calendar_id>/event/<int:event_id>', methods = ['PUT', 'DELETE'])
+def attendance(calendar_id, event_id):
+    calendar_query = Calendar.query.get(calendar_id)
+    event_query = Event.query.get(event_id)
+    if request.method == 'PUT':
+        calendar_query.events_assistance.append(event_query)
+        db.session.commit()
+        return jsonify({'msg': 'Event saved'}), 201
+    
+    if request.method == 'DELETE':
+        calendar_query.events_assistance.remove(event_query)
+        db.session.commit()
+        return jsonify({'msg': 'Event deleted from calendar'}), 201
+
 
 if __name__ == "__main__":
     Manager.run()

@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-favorite = db.Table('favorite',
+favorite = db.Table('favorite', db.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
     db.Column('category_id', db.Integer, db.ForeignKey('category.category_id'))
 )
@@ -34,7 +34,7 @@ class User(db.Model):
     birthday_date = db.Column(db.String(8))
     auths = db.relationship('Auth', backref ='user')
     calendars = db.relationship('Calendar', backref = 'user') 
-    favs = db.relationship('Category', secondary = favorite, backref = 'user')
+    favs = db.relationship('Category', secondary = favorite, back_populates = 'users', lazy=True)
 
     def __repr__(self):
          return '<User %r>' % self.name
@@ -55,7 +55,7 @@ class Calendar(db.Model):
     name = db.Column(db.String(25), nullable = False)
     description = db.Column(db.String(300), nullable = True)
     calendar_id_owner = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-    attendances = db.relationship('Event', secondary = attendance, backref = 'calendar')
+    events_assistance = db.relationship('Event', secondary = attendance, back_populates = 'in_calendar', lazy=True)
 
     def __repr__(self):
          return '<Calendar %r>' % self.name
@@ -64,8 +64,9 @@ class Calendar(db.Model):
         return {
              "calendar_id": self.calendar_id,
              "name_calendar": self.name,
-            "description": self.description,
-             "calendar_id_owner": self.calendar_id_owner
+             "description": self.description,
+             "calendar_id_owner": self.calendar_id_owner,
+             "events_assistance": list(map(lambda x: x.serialize(), self.events_assistance))
             }
 
 class Category(db.Model):
@@ -73,7 +74,7 @@ class Category(db.Model):
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(50), nullable = False)
     events = db.relationship('Event', backref = 'category')
-    users = db.relationship('User', secondary = favorite, backref = 'category')
+    users = db.relationship('User', secondary = favorite, back_populates = 'favs', lazy=True)
     
     def __repr__(self):
         return '<Category %r>' % self.category_name
@@ -99,7 +100,7 @@ class Event(db.Model):
     ticket_url = db.Column(db.String(100))
     is_canceled = db.Column(db.String(100))
     event_category = db.Column(db.Integer, db.ForeignKey('category.category_id'))
-    attendances = db.relationship('Calendar', secondary = attendance, backref = 'event')
+    in_calendar = db.relationship('Calendar', secondary = attendance, back_populates = 'events_assistance', lazy=True)
 
     def __repr__(self):
         return '<Event %r>' % self.event_id
@@ -118,4 +119,5 @@ class Event(db.Model):
              "street": self.street,
              "ticket_url": self.ticket_url,
              "is_canceled": self.is_canceled,
+             "in_calendar": list(map(lambda x: x.serialize(), self.in_calendar))
             }

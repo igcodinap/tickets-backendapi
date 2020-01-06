@@ -45,6 +45,7 @@ class User(db.Model):
              "last_name": self.last_name,
              "email": self.email,
              "birthday_date": self.birthday_date,
+             "favs": list(map(lambda x: x.serialize(), self.favs))
             }
 
 
@@ -72,7 +73,7 @@ class Category(db.Model):
     category_id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(50), nullable = False)
     events = db.relationship('Event', backref = 'category')
-    favs = db.relationship('User', secondary = favorite, backref = 'category')
+    users = db.relationship('User', secondary = favorite, backref = 'category')
     
     def __repr__(self):
         return '<Category %r>' % self.category_name
@@ -80,7 +81,8 @@ class Category(db.Model):
     def serialize(self):
         return {
             "categoryid": self.category_id,
-            "categoryname": self.category_name
+            "categoryname": self.category_name,
+            "users": list(map(lambda x: x.serialize(), self.users))
         }
 
 class Event(db.Model):

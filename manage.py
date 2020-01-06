@@ -221,7 +221,14 @@ def calendar_handler(calendar_id=None):
             db.session.commit()
             return jsonify({"msg":"Reservation has been deleted"}), 201
 
-
+@app.route('/user/<int:user_id>/category/<int:category_id>', methods = ['GET', 'PUT', 'DELETE'])
+def favcategories(user_id, category_id):
+    user_query = User.query.get(user_id)
+    category_query = Category.query.get(category_id)
+    if request.method == 'PUT':
+        user_query.favs.append(category_query)
+        db.session.commit()
+        return jsonify({'msg': 'Category added'}), 201
 
 if __name__ == "__main__":
     Manager.run()

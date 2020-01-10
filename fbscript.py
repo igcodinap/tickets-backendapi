@@ -30,14 +30,20 @@ def main():
             event_id = exists(decoded_data["events"]["data"][readingevent].get("id"))
             event_name = exists(decoded_data["events"]["data"][readingevent].get("name"))
             description = exists(decoded_data["events"]["data"][readingevent].get("description"))
+            city = exists(decoded_data["events"]["data"][readingevent]["place"]["location"].get("city"))
+            street = exists(decoded_data["events"]["data"][readingevent]["place"]["location"].get("street"))
+            lat = exists(decoded_data["events"]["data"][readingevent]["place"]["location"].get("latitude"))
+            longi = exists(decoded_data["events"]["data"][readingevent]["place"]["location"].get("longitude"))
             start_time = exists(decoded_data["events"]["data"][readingevent].get("start_time"))
             end_time = exists(decoded_data["events"]["data"][readingevent].get("end_time"))
 
-
-            
             print(event_name)
             print(event_id)
             print(description)
+            print(city)
+            print(street)
+            print(lat)
+            print(longi)
             print(start_time)
             print(end_time)
             readingevent +=1

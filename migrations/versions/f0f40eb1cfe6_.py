@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 884ed214b451
+Revision ID: f0f40eb1cfe6
 Revises: 
-Create Date: 2020-01-06 14:29:33.343028
+Create Date: 2020-01-10 11:49:48.301504
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '884ed214b451'
+revision = 'f0f40eb1cfe6'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,15 @@ def upgrade():
     sa.Column('category_id', sa.Integer(), nullable=False),
     sa.Column('category_name', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('category_id')
+    )
+    op.create_table('facebook',
+    sa.Column('table_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.String(length=100), nullable=True),
+    sa.Column('last_name', sa.String(length=100), nullable=True),
+    sa.Column('email', sa.String(length=80), nullable=True),
+    sa.PrimaryKeyConstraint('table_id'),
+    sa.UniqueConstraint('user_id')
     )
     op.create_table('user',
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -90,5 +99,6 @@ def downgrade():
     op.drop_table('calendar')
     op.drop_table('auth')
     op.drop_table('user')
+    op.drop_table('facebook')
     op.drop_table('category')
     # ### end Alembic commands ###

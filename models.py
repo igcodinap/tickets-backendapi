@@ -48,6 +48,24 @@ class User(db.Model):
              "favs": list(map(lambda x: x.serialize(), self.favs))
             }
 
+class Facebook(db.Model):
+    __tablename__="facebook"
+    user_id = db.column(db.Integer)
+    name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    email = db.Column(db.String(80)
+
+    def __repr__(self):
+        return '<Facebook %r>' % self.user_id
+
+    def serialize(self):
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "last_name": self.last_name,
+            "email": self.email
+        }
+
 
 class Calendar(db.Model):
     __tablename__="calendar"

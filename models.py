@@ -102,7 +102,6 @@ class Category(db.Model):
         return {
             "categoryid": self.category_id,
             "categoryname": self.category_name,
-            "users": list(map(lambda x: x.serialize(), self.users))
         }
 
 class Event(db.Model):
@@ -138,7 +137,6 @@ class Event(db.Model):
              "street": self.street,
              "ticket_url": self.ticket_url,
              "is_canceled": self.is_canceled,
-             "in_calendar": list(map(lambda x: x.serialize(), self.in_calendar))
             }
 
 

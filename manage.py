@@ -103,9 +103,9 @@ def user(user_id=None):
             user = User.query.get(user_id)
             return jsonify(user.serialize()), 200
         else:
-            user = User.query.all()
-            users = list(map(lambda user: user.serialize(), user))
-            return jsonify(users), 200
+            users = User.query.all()
+            users_list = [user.serialize() for user in users]
+            return jsonify(users_list), 200
 
     if request.method == 'DELETE': 
         user = User.query.get(user_id)
@@ -185,7 +185,7 @@ def event(event_id=None):
         db.session.commit()
         return "Success", 200
 
-@app.route('/calendars', methods = ['POST'])
+@app.route('/calendars', methods = ['POST', 'GET'])
 @app.route('/calendars/<int:calendar_id>', methods= ['GET', 'PUT', 'DELETE'])
 def calendar_handler(calendar_id=None):
     if request.method == 'GET':

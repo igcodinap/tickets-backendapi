@@ -1,8 +1,10 @@
 import json
 import facebook
+from models import db, User, Event, favorite, attendance, Auth, Calendar, Category, Facebook
+
 
 def main():
-    token = {"EAALShho8E80BAN9rSjWcHCdIuffH9p4nFi7gMJBTF0o8i7FpZCvdjhZAhlXtxJzy9vmIwmB1HfVxAvTyteEkVRDtUhvupOd3TnS8xNjDoiFhsGZC9RJvVgI5RXqQ8zYJ2cUFJmrWzVlgFfILETEGgSwKznsFj1ZAqZAR4IeG653k7SBaAdIcNPkWVhDOSzLEl378hVMQfLtBkl3tJMaNaV8YTjce6NlwUQVEj1kLtmAZDZD"}
+    token = {"EAALShho8E80BAFC1d96qFYVYlO5yB3FRjnmA9iqPWVs4vUnmumKjd013f16XXXfKJnSJvB8L8fVnlmNZBSHP3XSuaSTJFgNIW2bqM8BsoHvi0CG5MSQZBm7u1n9pWpXC8843dkWEVJ9ZC5nPGCwCFOZCa0Ur8Ee1NXQyb0ZArT382nae29Lk4p3drtV0y6wxe4QwZBCyr3ZBpZCOHuvJwQ7o3vvxE0CBE1acH4BKKmbUKwZDZD"}
     graph = facebook.GraphAPI(token)
 
     fields = ['name,email, events']
@@ -37,17 +39,20 @@ def main():
             start_time = exists(decoded_data["events"]["data"][readingevent].get("start_time"))
             end_time = exists(decoded_data["events"]["data"][readingevent].get("end_time"))
 
-            print(event_name)
-            print(event_id)
-            print(description)
-            print(city)
-            print(street)
-            print(lat)
-            print(longi)
-            print(start_time)
-            print(end_time)
-            readingevent +=1
-            print("*********************")
+            event = Event()
+            event.event_name = event_name
+            event.description = description
+            event.start_time = start_time
+            event.end_time = end_time
+            event.city = city
+            event.street = street
+            event.lat = lat
+            event.longi = longi
+        
+            db.session.add(event)
+
+            db.session.commit()
+            print("Success")
 
 
         

@@ -3,13 +3,14 @@ import re
 from flask import Flask, jsonify, request
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from models import db, User, Event, favorite, attendance, Auth, Calendar, Category
+from models import db, User, Event, favorite, attendance, Auth, Calendar, Category, Facebook
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+from sqlalchemy.exc import IntegrityError
 
 
 
@@ -249,6 +250,23 @@ def attendance(calendar_id, event_id):
         db.session.commit()
         return jsonify({'msg': 'Event deleted from calendar'}), 201
 
+@app.route('/facebookusers', methods = ['GET','POST', 'DELETE'])
+def facebookusers():
+    if request.method == 'GET':
+        facebook_users = Facebook.query.all()
+        fbusers_list = [users.serialize() for users in facebook_users]
+        return jsonify(fbusers_list), 200
+    
+    if request.method == 'POST':
+        facebook = Facebook()
+        facebook.user_id = request.json.get('user_id')
+        facebook.name = request.json.get('name')
+        facebook.last_name = request.json.get('last_name')
+        facebook.email = request.json.get('email')
+
+        db.session.add(facebook)
+        db.session.commit()
+        return jsonify(facebook.serialize()), 201
 
 if __name__ == "__main__":
     Manager.run()

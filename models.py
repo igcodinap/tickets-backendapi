@@ -140,3 +140,6 @@ class Event(db.Model):
              "is_canceled": self.is_canceled,
              "in_calendar": list(map(lambda x: x.serialize(), self.in_calendar))
             }
+
+
+

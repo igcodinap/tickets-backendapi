@@ -4,7 +4,7 @@ from models import db, User, Event, favorite, attendance, Auth, Calendar, Catego
 
 
 def main():
-    token = {"EAALShho8E80BAFC1d96qFYVYlO5yB3FRjnmA9iqPWVs4vUnmumKjd013f16XXXfKJnSJvB8L8fVnlmNZBSHP3XSuaSTJFgNIW2bqM8BsoHvi0CG5MSQZBm7u1n9pWpXC8843dkWEVJ9ZC5nPGCwCFOZCa0Ur8Ee1NXQyb0ZArT382nae29Lk4p3drtV0y6wxe4QwZBCyr3ZBpZCOHuvJwQ7o3vvxE0CBE1acH4BKKmbUKwZDZD"}
+    token = {""}
     graph = facebook.GraphAPI(token)
 
     fields = ['name,email, events']

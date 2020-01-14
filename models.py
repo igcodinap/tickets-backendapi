@@ -28,6 +28,11 @@ class Auth(db.Model):
     def __repr__(self):
         return "<Auth %r>" % self.token
 
+    def serialize(self):
+        return {
+            "token": self.token
+        }
+
 
 class User(db.Model):
     __tablename__ = "user"
@@ -129,8 +134,8 @@ class Event(db.Model):
     event_id = db.Column(db.Integer, primary_key=True, unique=True)
     event_name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(5000))
-    start_time = db.Column(db.String(30))
-    end_time = db.Column(db.String(30))
+    start_time = db.Column(db.String(50))
+    end_time = db.Column(db.String(50))
     city = db.Column(db.String(100))
     street = db.Column(db.String(100))
     lat = db.Column(db.Float)

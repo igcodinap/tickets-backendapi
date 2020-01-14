@@ -23,6 +23,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
 )
 from sqlalchemy.exc import IntegrityError
+import datetime
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -65,10 +66,26 @@ def login():
         access_token = create_access_token(identity=email)
         data = {
             "access_token": access_token,
-            "user": user.serialize(),
             "msg": "success",
         }
+        auth = Auth()
+        auth.token = access_token
+        auth.is_valid = True
+        auth.created_at = datetime.datetime.now()
+        auth.login_user_id = user.user_id
+
+        db.session.add(auth)
+        db.session.commit()
+
         return jsonify(data), 200
+
+
+@app.route('/protected', methods=['GET'])
+@jwt_required
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    user = get_jwt_identity()
+    return jsonify(logged_in_as=user), 200
 
 
 @app.route("/signup", methods=["POST"])
@@ -186,7 +203,7 @@ def event(event_id=None):
         event.longi = request.json.get("longi")
         event.ticket_url = request.json.get("ticket_url")
         event.is_canceled = request.json.get("is_canceled")
-        event.event_category = request.json.get("event_category")
+
 
         db.session.add(event)
 

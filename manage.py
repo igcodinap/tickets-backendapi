@@ -1,5 +1,6 @@
 import os
 import re
+import datetime
 from flask import Flask, jsonify, request
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
@@ -21,9 +22,11 @@ from flask_jwt_extended import (
     jwt_required,
     create_access_token,
     get_jwt_identity,
+    create_refresh_token,
+    jwt_refresh_token_required,
+    get_raw_jwt,
 )
 from sqlalchemy.exc import IntegrityError
-import datetime
 
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -35,8 +38,11 @@ app.config["DEBUG"] = True
 app.config["ENV"] = "development"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(BASEDIR, "test.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access']
 db.init_app(app)
 jwt = JWTManager(app)
+blacklist = set()
 bcrypt = Bcrypt(app)
 Migrate = Migrate(app, db)
 CORS(app)
@@ -88,6 +94,21 @@ def protected():
     return jsonify(logged_in_as=user), 200
 
 
+@jwt.expired_token_loader
+def my_expired_token_callback(expired_token):
+    token_type = expired_token['type']
+    return jsonify({
+        'status': 401,
+        'sub_status': 42,
+        'msg': 'La sesión del token {} ha expirado'.format(token_type)
+    }), 
+    
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    jti = decrypted_token['jti']
+    return jti in blacklist
+
+
 @app.route("/signup", methods=["POST"])
 def signup():
     # Regular expression that checks a valid email
@@ -121,6 +142,7 @@ def signup():
 
 @app.route("/user/<int:user_id>", methods=["DELETE", "GET", "PUT"])
 @app.route("/users", methods=["GET"])
+@jwt_required
 def user(user_id=None):
     if request.method == "GET":
         if user_id is not None:
@@ -248,9 +270,7 @@ def calendar_handler(calendar_id=None):
             return jsonify({"msg": "Calendar has been deleted"}), 201
 
 
-@app.route(
-    "/user/<int:user_id>/category/<int:category_id>", methods=["GET", "PUT", "DELETE"]
-)
+@app.route("/user/<int:user_id>/category/<int:category_id>", methods=["GET", "PUT", "DELETE"])
 def favcategories(user_id, category_id):
     user_query = User.query.get(user_id)
     category_query = Category.query.get(category_id)
@@ -265,9 +285,7 @@ def favcategories(user_id, category_id):
         return jsonify({"msg": "category deleted"}), 201
 
 
-@app.route(
-    "/calendar/<int:calendar_id>/event/<int:event_id>", methods=["PUT", "DELETE"]
-)
+@app.route("/calendar/<int:calendar_id>/event/<int:event_id>", methods=["PUT", "DELETE"])
 def attendance(calendar_id, event_id):
     calendar_query = Calendar.query.get(calendar_id)
     event_query = Event.query.get(event_id)
@@ -299,6 +317,14 @@ def facebookusers():
         db.session.add(facebook)
         db.session.commit()
         return jsonify(facebook.serialize()), 201
+
+
+@app.route('/logout', methods=['DELETE'])
+@jwt_required
+def logout():
+    jti = get_raw_jwt()['jti']
+    blacklist.add(jti)
+    return jsonify({"msg": "Te has deslogueado exitosamente"}), 200
 
 
 if __name__ == "__main__":

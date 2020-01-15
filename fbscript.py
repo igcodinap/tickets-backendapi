@@ -15,6 +15,8 @@ from models import (
     fbattendance,
     fbfavorite
 )
+from trainedClassifier import clf
+
 
 def exists(var):
     if var:
@@ -24,6 +26,7 @@ def exists(var):
 
 
 def main():
+
     token = {
         "EAALShho8E80BAEhHcgUyeKi0VwHamG0lZAMiSLmqTyXqkqCW5fRLpr10gIUoZC2MGnfnYYrPkIkZC7LGFZBYa5OzHv9BHaZCYrQSg2GF2r6JBmEDGpgyisucFoPCPDBZB8DJjDAZCdON33TdnmSCOxAPcc4YEZCZBZChMZD"
     }
@@ -33,6 +36,7 @@ def main():
 
     ids = [10220832650024954]
     
+
 
     for id in ids:
         profile = graph.get_object(id, fields=fields)
@@ -68,7 +72,9 @@ def main():
                 decoded_data["events"]["data"][readingevent].get("end_time")
             )
 
+            event_category = clf.String(description)
             print(event_name)
+            print(event_category)
             print(event_id)
             print(description)
             print(city)
@@ -77,13 +83,13 @@ def main():
             print(longi)
             print(start_time)
             print(end_time)
-            readingevent +=1
             print("*********************")
 
-            
             event = Event()
+            event.event_id = event_id
             event.event_name = event_name
             event.description = description
+            event.event_category = event_category
             event.start_time = start_time
             event.end_time = end_time
             event.city = city
@@ -91,8 +97,12 @@ def main():
             event.lat = lat
             event.longi = longi
 
-            db.session.add(event)
-            db.session.commit()
+            if Event.query.get(event_id):
+                readingevent +=1
+            else:
+                db.session.add(event)
+                db.session.commit()
+                readingevent +=1
     return jsonify({'msg': 'Success'}), 200
 
 

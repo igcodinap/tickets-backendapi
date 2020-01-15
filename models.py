@@ -140,7 +140,7 @@ class Event(db.Model):
     longi = db.Column(db.Float)
     ticket_url = db.Column(db.String(100))
     is_canceled = db.Column(db.String(100))
-    event_category = db.Column(db.Integer, db.ForeignKey("category.category_id"))
+    event_category = db.Column(db.String, db.ForeignKey("category.category_name"))
     in_calendar = db.relationship(
         "Calendar", secondary=attendance, back_populates="events_assistance", lazy=True
     )

@@ -13,7 +13,10 @@ from models import (
     Auth,
     Calendar,
     Category,
-    Facebook,
+    fbUser,
+    fbCalendar,
+    fbattendance,
+    fbfavorite
 )
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
@@ -225,12 +228,31 @@ def event(event_id=None):
         event.longi = request.json.get("longi")
         event.ticket_url = request.json.get("ticket_url")
         event.is_canceled = request.json.get("is_canceled")
-
+        event.event_category = request.json.get("event_category")
 
         db.session.add(event)
 
         db.session.commit()
         return "Success", 200
+
+@app.route('/category/<int:event_category>/city/<city>', methods = ['GET'])
+def eventsfilter(event_category=None, city=None):
+    if event_category is not None and city is not None:
+        events = Event.query.filter_by(event_category=event_category, city=city)
+        events_list = [event.serialize() for event in events]
+        return jsonify(events_list), 200
+    if event_category is not None and city is None:
+        events = Event.query.filter_by(event_category=event_category)
+        events_list = [event.serialize() for event in events]
+        return jsonify(events_list), 200
+    if event_category is None and city is not None:
+        events = Event.query.filter_by(city=city)
+        events_list = [event.serialize() for event in events]
+        return jsonify(events_list), 200
+    if event_category is None and city is None:
+        events = Event.query.all()
+        events_list = [event.serialize() for event in events]
+        return jsonify(events_list), 200
 
 
 @app.route("/calendars", methods=["POST", "GET"])

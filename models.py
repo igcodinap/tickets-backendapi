@@ -16,6 +16,20 @@ attendance = db.Table(
     db.Column("event_id", db.Integer, db.ForeignKey("event.event_id")),
 )
 
+fbattendance = db.Table(
+    "fbattendance",
+    db.Column("calendar_id", db.Integer, db.ForeignKey("fbcalendar.calendar_id")),
+    db.Column("event_id", db.Integer, db.ForeignKey("event.event_id")),
+)
+
+
+fbfavorite = db.Table(
+    "fbfavorite",
+    db.metadata,
+    db.Column("user_id", db.Integer, db.ForeignKey("fbuser.user_id")),
+    db.Column("category_id", db.Integer, db.ForeignKey("category.category_id")),
+)
+
 
 class Auth(db.Model):
     __tablename__ = "auth"
@@ -62,25 +76,6 @@ class User(db.Model):
         }
 
 
-class Facebook(db.Model):
-    __tablename__ = "facebook"
-    table_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, unique=True)
-    name = db.Column(db.String(100))
-    last_name = db.Column(db.String(100))
-    email = db.Column(db.String(80))
-
-    def __repr__(self):
-        return "<Facebook %r>" % self.user_id
-
-    def serialize(self):
-        return {
-            "user_id": self.user_id,
-            "name": self.name,
-            "last_name": self.last_name,
-            "email": self.email,
-        }
-
 
 class Calendar(db.Model):
     __tablename__ = "calendar"
@@ -118,6 +113,9 @@ class Category(db.Model):
     users = db.relationship(
         "User", secondary=favorite, back_populates="favs", lazy=True
     )
+    fbusers = db.relationship(
+        "fbUser", secondary=fbfavorite, back_populates="favs", lazy=True
+    )
 
     def __repr__(self):
         return "<Category %r>" % self.category_name
@@ -146,6 +144,9 @@ class Event(db.Model):
     in_calendar = db.relationship(
         "Calendar", secondary=attendance, back_populates="events_assistance", lazy=True
     )
+    in_fbcalendar = db.relationship(
+        "fbCalendar", secondary=fbattendance, back_populates="events_assistance", lazy=True
+    )
 
     def __repr__(self):
         return "<Event %r>" % self.event_id
@@ -165,3 +166,55 @@ class Event(db.Model):
             "ticket_url": self.ticket_url,
             "is_canceled": self.is_canceled,
         }
+
+
+class fbUser(db.Model):
+    __tablename__ = "fbuser"
+    table_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, unique=True)
+    name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    email = db.Column(db.String(80))
+    calendars = db.relationship("fbCalendar", backref="fbuser")
+    favs = db.relationship(
+        "Category", secondary=fbfavorite, back_populates="fbusers", lazy=True
+    )
+
+    def __repr__(self):
+        return "<fbUser %r>" % self.user_id
+
+    def serialize(self):
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "last_name": self.last_name,
+            "email": self.email,
+        }
+
+
+class fbCalendar(db.Model):
+    __tablename__ = "fbcalendar"
+    calendar_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(25), nullable=False)
+    description = db.Column(db.String(300), nullable=True)
+    calendar_id_owner = db.Column(db.Integer, db.ForeignKey("fbuser.user_id"))
+    events_assistance = db.relationship(
+        "Event", secondary=fbattendance, back_populates="in_fbcalendar", lazy=True
+    )
+
+    def __repr__(self):
+        return "<fbCalendar %r>" % self.name
+
+    def serialize(self):
+        return {
+            "calendar_id": self.calendar_id,
+            "name_calendar": self.name,
+            "description": self.description,
+            "calendar_id_owner": self.calendar_id_owner,
+            "events_assistance": list(
+                map(lambda x: x.serialize(), self.events_assistance)
+            ),
+        }
+
+    def serializeforuser(self):
+        return {"calendar_id": self.calendar_id, "name_calendar": self.name}

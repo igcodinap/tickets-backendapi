@@ -1,5 +1,6 @@
 import os
 import re
+from fbscript import main
 import datetime
 from flask import Flask, jsonify, request
 from flask_script import Manager
@@ -348,6 +349,11 @@ def logout():
     blacklist.add(jti)
     return jsonify({"msg": "Te has deslogueado exitosamente"}), 200
 
+
+@app.route("/events", methods=["POST"])
+def post():
+    main()
+    return jsonify({'msg': 'Carga exitosa'}), 200
 
 if __name__ == "__main__":
     Manager.run()

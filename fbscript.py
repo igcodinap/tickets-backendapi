@@ -1,5 +1,6 @@
 import json
 import facebook
+from flask import Flask, jsonify, request
 from models import (
     db,
     User,
@@ -9,7 +10,10 @@ from models import (
     Auth,
     Calendar,
     Category,
-    Facebook,
+    fbUser,
+    fbCalendar,
+    fbattendance,
+    fbfavorite
 )
 
 def exists(var):
@@ -76,7 +80,7 @@ def main():
             readingevent +=1
             print("*********************")
 
-            """
+            
             event = Event()
             event.event_name = event_name
             event.description = description
@@ -89,7 +93,7 @@ def main():
 
             db.session.add(event)
             db.session.commit()
-            """
+    return jsonify({'msg': 'Success'}), 200
 
 
 if __name__ == "__main__":

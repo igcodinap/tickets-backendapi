@@ -24,6 +24,9 @@ def exists(var):
     else:
         return ""
 
+def categoryClassification(somedescription):
+    category_classification = clf.String(somedescription)
+    return category_classification
 
 def main():
 
@@ -72,28 +75,18 @@ def main():
                 decoded_data["events"]["data"][readingevent].get("end_time")
             )
 
-            event_category = clf.String(description)
-            print(event_name)
-            print(event_category)
-            print(event_id)
-            print(description)
-            print(city)
-            print(street)
-            print(lat)
-            print(longi)
-            print(start_time)
-            print(end_time)
-            print("*********************")
+            determinedCategory = categoryClassification(event_name)
 
             event = Event()
             event.event_id = event_id
             event.event_name = event_name
             event.description = description
-            event.event_category = event_category
+            event.event_category = determinedCategory
             event.start_time = start_time
             event.end_time = end_time
             event.city = city
             event.street = street
+            event.is_canceled = False
             event.lat = lat
             event.longi = longi
 
@@ -101,8 +94,8 @@ def main():
                 readingevent +=1
             else:
                 db.session.add(event)
-                db.session.commit()
                 readingevent +=1
+        db.session.commit()
     return jsonify({'msg': 'Success'}), 200
 
 

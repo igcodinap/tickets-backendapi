@@ -141,7 +141,7 @@ def signup():
 
     db.session.commit()
 
-    return jsonify({"success": True}), 201
+    return jsonify({"user_id": user.user_id}), 201
 
 
 @app.route("/user/<int:user_id>", methods=["DELETE", "GET", "PUT"])

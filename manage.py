@@ -87,7 +87,7 @@ def login():
         db.session.add(auth)
         db.session.commit()
 
-        return jsonify(data), 200
+        return jsonify(data, user.serialize()), 200
 
 
 @app.route('/protected', methods=['GET'])
@@ -130,6 +130,7 @@ def signup():
     if re.search(preg, request.json.get("password")):
         pw_hash = bcrypt.generate_password_hash(request.json.get("password"))
         user.password = pw_hash
+
     else:
         return "Invalid password format", 400
     # Ask for everything else
@@ -138,7 +139,13 @@ def signup():
     user.birthday_date = request.json.get("birthday_date")
 
     db.session.add(user)
+    db.session.commit()
 
+    calendar = Calendar()
+    calendar.calendar_id_owner = user.user_id
+    calendar.name = "General"
+    calendar.description = "Calendario de todo tipo de eventos"
+    db.session.add(calendar)
     db.session.commit()
 
     return jsonify({"user_id": user.user_id}), 201
@@ -146,7 +153,7 @@ def signup():
 
 @app.route("/user/<int:user_id>", methods=["DELETE", "GET", "PUT"])
 @app.route("/users", methods=["GET"])
-@jwt_required
+#@jwt_required
 def user(user_id=None):
     if request.method == "GET":
         if user_id is not None:

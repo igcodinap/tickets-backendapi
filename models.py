@@ -158,11 +158,10 @@ class Event(db.Model):
             "description": self.description,
             "start_time": self.start_time,
             "end_time": self.end_time,
-            "lat": self.lat,
-            "longi": self.longi,
+            "lat": str(self.lat)[:10],
+            "longi": str(self.longi)[:10],
             "city": self.city,
             "street": self.street,
-            "ticket_url": self.ticket_url,
             "is_canceled": self.is_canceled,
         }
 

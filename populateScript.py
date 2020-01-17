@@ -68,14 +68,16 @@ def main():
             longi = exists(
                 decoded_data["events"]["data"][readingevent]["place"]["location"].get("longitude")
             )
-            start_time = exists(
+            start_time_raw = exists(
                 decoded_data["events"]["data"][readingevent].get("start_time")
             )
-            end_time = exists(
+            end_time_raw = exists(
                 decoded_data["events"]["data"][readingevent].get("end_time")
             )
 
             determinedCategory = categoryClassification(event_name)
+            start_time = start_time_raw.replace('T', ' ').replace('-0300', '')
+            end_time = end_time_raw.replace('T', ' ').replace('-0300', '')
 
             event = Event()
             event.event_id = event_id

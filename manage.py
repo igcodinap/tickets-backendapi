@@ -1,6 +1,6 @@
 import os
 import re
-from fbscript import main
+from populateScript import main
 import datetime
 from flask import Flask, jsonify, request
 from flask_script import Manager

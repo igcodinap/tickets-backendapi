@@ -138,7 +138,6 @@ class Event(db.Model):
     street = db.Column(db.String(100))
     lat = db.Column(db.Float)
     longi = db.Column(db.Float)
-    ticket_url = db.Column(db.String(100))
     is_canceled = db.Column(db.String(100))
     event_category = db.Column(db.String, db.ForeignKey("category.category_name"))
     in_calendar = db.relationship(

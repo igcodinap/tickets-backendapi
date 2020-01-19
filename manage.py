@@ -234,7 +234,7 @@ def event(event_id=None):
         event.street = request.json.get("street")
         event.lat = request.json.get("lat")
         event.longi = request.json.get("longi")
-        event.ticket_url = request.json.get("ticket_url")
+        event.event_photo_url = request.json.get("event_photo_url")
         event.is_canceled = request.json.get("is_canceled")
         event.event_category = request.json.get("event_category")
 

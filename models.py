@@ -141,6 +141,7 @@ class Event(db.Model):
     longi = db.Column(db.Float)
     is_canceled = db.Column(db.String(100))
     event_category = db.Column(db.String, db.ForeignKey("category.category_name"))
+    event_photo_url = db.Column(db.String(200))
     in_calendar = db.relationship(
         "Calendar", secondary=attendance, back_populates="events_assistance", lazy=True
     )
@@ -164,6 +165,7 @@ class Event(db.Model):
             "city": self.city,
             "street": self.street,
             "is_canceled": self.is_canceled,
+            "event_photo_url": self.event_photo_url
         }
 
 

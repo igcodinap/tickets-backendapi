@@ -31,17 +31,17 @@ def categoryClassification(somedescription):
 def categoryUrl(category_classification):
     category_photo = ""
     if category_classification == "Infantil y Familia":
-        category_photo = "../../img/1.jpg"
+        category_photo = "/1.jpg"
     elif category_classification == "Deportes":
-        category_photo = "../../img/2.jpg"
+        category_photo = "/2.jpg"
     elif category_classification == "Ciencia y Negocios":
-        category_photo = "../../img/3.jpg"
+        category_photo = "/3.jpg"
     elif category_classification == "Musica y Danza":
-        category_photo = "../../img/4.jpg"
+        category_photo = "/4.jpg"
     elif category_classification == "Museo y Parques":
-        category_photo = "../../img/5.jpg"
+        category_photo = "/5.jpg"
     elif category_classification == "Cine y Teatro":
-        category_photo = "../../img/6.jpg"
+        category_photo = "/6.jpg"
     return category_photo
     
 def main():

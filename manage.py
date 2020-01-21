@@ -243,23 +243,13 @@ def event(event_id=None):
         db.session.commit()
         return "Success", 200
 
-@app.route('/category/<int:event_category>/city/<city>', methods = ['GET'])
-def eventsfilter(event_category=None, city=None):
-    if event_category is not None and city is not None:
-        events = Event.query.filter_by(event_category=event_category, city=city)
-        events_list = [event.serialize() for event in events]
-        return jsonify(events_list), 200
-    if event_category is not None and city is None:
+@app.route('/category/<event_category>', methods = ['GET'])
+def eventsfilter(event_category=None):
+    if event_category is not None:
         events = Event.query.filter_by(event_category=event_category)
         events_list = [event.serialize() for event in events]
         return jsonify(events_list), 200
-    if event_category is None and city is not None:
-        events = Event.query.filter_by(city=city)
-        events_list = [event.serialize() for event in events]
-        return jsonify(events_list), 200
-    if event_category is None and city is None:
-        events = Event.query.all()
-        events_list = [event.serialize() for event in events]
+
         return jsonify(events_list), 200
 
 

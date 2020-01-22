@@ -206,7 +206,7 @@ def category_handler(category_id=None):
 
 
 @app.route("/event", methods=["POST", "GET"])
-@app.route("/event/<int:event_id>", methods=["DELETE", "GET"])
+@app.route("/event/<int:event_id>", methods=["DELETE", "GET", "PUT"])
 def event(event_id=None):
     if request.method == "GET":
         if event_id is None:
@@ -223,6 +223,14 @@ def event(event_id=None):
             db.session.delete(event)
             db.session.commit()
             return jsonify({"msg": "Field has been deleted"}), 201
+    
+    if request.method == "PUT":
+        if event_id is not None:
+            event = Event.query.get(event_id)
+            event.event_category = request.json.get("event_category")
+            db.session.commit()
+            return jsonify({"msg": "Field has been changed"})
+
 
     if request.method == "POST":
         event = Event()
